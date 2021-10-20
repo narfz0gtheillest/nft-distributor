@@ -1,0 +1,7 @@
+.env
+
+node_modules
+
+addresses.csv
+success.csv
+failed.csv

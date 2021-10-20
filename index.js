@@ -16,8 +16,7 @@ const csvWriterFailed = createCsvWriter({
   header: ["walletAddress"],
 });
 
-const data = JSON.parse(process.env.SECRET_KEY);
-const secretKey = Uint8Array.from(data);
+const secretKey = Uint8Array.from(JSON.parse(process.env.SECRET_KEY));
 
 const addresses = [];
 
@@ -55,5 +54,58 @@ fs.createReadStream("addresses.csv")
   const results = accounts.filter(
     (account) => account.account.data.parsed.info.tokenAmount.amount >= 1
   );
-  console.log(results.length);
+  console.log(`Number of NFTs available to send: ${results.length}`);
+
+  if (results.length > 0) {
+    for (let i = 0; i < addresses.length; i++) {
+      const token = new splToken.Token(
+        connection,
+        new web3.PublicKey(results[i].account.data.parsed.info.mint),
+        splToken.TOKEN_PROGRAM_ID,
+        from
+      );
+      const token_account_address = results[i].pubkey;
+      const to = new web3.PublicKey(addresses[i].address);
+      let associated_token_acc;
+      try {
+        associated_token_acc = await token.getOrCreateAssociatedAccountInfo(to);
+      } catch (error) {
+        await csvWriterFailed.writeRecords([{ walletAddress: to.toString() }]);
+        console.log("FAILED");
+        console.log(error);
+        continue;
+      }
+      const associated_token_acc_add = associated_token_acc.address;
+      // Add token transfer instructions to transaction
+      const transaction = new web3.Transaction().add(
+        splToken.Token.createTransferInstruction(
+          splToken.TOKEN_PROGRAM_ID,
+          token_account_address,
+          associated_token_acc_add,
+          from.publicKey,
+          [],
+          1
+        )
+      );
+
+      try {
+        // Sign transaction, broadcast, and confirm
+        const signature = await web3.sendAndConfirmTransaction(
+          connection,
+          transaction,
+          [from],
+          { commitment: process.env.COMMITMENT }
+        );
+        await csvWriterSuccess
+          .writeRecords([{ walletAddress: to.toString(), signature }])
+          .catch((err) => {
+            console.log("Save failed", err);
+          });
+        console.log(`Transaction succeeded: ${signature}`);
+      } catch (error) {
+        await csvWriterFailed.writeRecords([{ walletAddress: to.toString() }]);
+        console.log(`Transaction failed: ${error}`);
+      }
+    }
+  }
 })();
