@@ -6,11 +6,6 @@ This is a NFT distributor where you can easily distribute a set of 1/1 NFTs to a
 
 1. Create a new wallet, either Sollet/Phantom works fine.
 2. Mint the desired number of NFTs to the wallet either through [Metaplex](https://github.com/metaplex-foundation/metaplex) or other valid ways. **Note: make sure that the wallet only holds SOL and the NFT collection that you want to distribute**
-3. You will need to create the following files to be able to run the program:
-    - addresses.csv
-        - a list of wallet addresses to send the NFTs to (see sample_addresses.csv for reference)
-    - .env
-        - populate the variables from .env.default with the respective values and copy to a new file .env
 
 Remember to have enough SOL in the wallet to cover the gas fees required to send the transactions.
 
