@@ -57,7 +57,7 @@ fs.createReadStream("addresses.csv")
   console.log(`Number of NFTs available to send: ${results.length}`);
 
   if (results.length > 0) {
-    for (let i = 0; i < addresses.length; i++) {
+    for (let i = 0; i < addresses.length && i < results.length; i++) {
       const token = new splToken.Token(
         connection,
         new web3.PublicKey(results[i].account.data.parsed.info.mint),
