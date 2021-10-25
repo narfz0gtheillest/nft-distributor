@@ -34,4 +34,4 @@ node index.js
 
 The program scans the given wallet address for all tokens that have an amount of 1 or more and sends each of these tokens to each address specified in addresses.csv. (1 address = 1 token) The program will write successful transactions to success.csv with each row having the destination wallet address and the transaction signature. The program will write failed transactions to failed.csv with each row having the destination wallet address. After the program finishes running, you may wish to copy the transactions in success.csv to a new file to keep a record of the successful transactions. Run the program again until there's no more failed addresses in failed.csv
 
-Note: The reason why there is a failure list is that Solana transcations can fail due to various reasons and therefore we would have to rerun the failed transactions.
+Note: There are various reasons why transactions in Solana can fail and hence the failure list. We would then have to rerun the failed transactions.
