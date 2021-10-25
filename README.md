@@ -9,7 +9,7 @@ This is a NFT distributor where you can easily distribute a set of 1/1 NFTs to a
 
 Remember to have enough SOL in the wallet to cover the gas fees required to send the transactions.
 
-### To run the program
+### Running the program
 
 Install dependencies:
 
@@ -17,12 +17,9 @@ Install dependencies:
 npm install
 ```
 
-You will need to create the following files to be able to run the program:
-- addresses.csv
-    - a list of wallet addresses to send the NFTs to (see `sample_addresses.csv` for reference)
-- .env
-    - populate the variables from `.env.default` with the respective values and copy to a new file `.env`
-
+Create the following files to configure the program:
+- `addresses.csv` -- a list of wallet addresses to send the NFTs to (see `sample_addresses.csv` for reference)
+- `.env` -- populate the variables from `.env.default` with the respective values and copy to a new file `.env`
 
 Run program:
 
@@ -30,8 +27,6 @@ Run program:
 node index.js
 ```
 
-### How the program works
+This command scans the given wallet address (in `.env`) for all tokens that have an amount of 1 or more and sends one of these tokens to each address in `addresses.csv`. The program writes successful transactions to `success.csv` with each row having the destination wallet address and the transaction signature. The program writes failed transactions to `failed.csv` with each row having the destination wallet address.
 
-The program scans the given wallet address for all tokens that have an amount of 1 or more and sends each of these tokens to each address specified in addresses.csv. (1 address = 1 token) The program will write successful transactions to success.csv with each row having the destination wallet address and the transaction signature. The program will write failed transactions to failed.csv with each row having the destination wallet address. After the program finishes running, you may wish to copy the transactions in success.csv to a new file to keep a record of the successful transactions. Run the program again until there's no more failed addresses in failed.csv
-
-Note: There are various reasons why transactions in Solana can fail and hence the failure list. We would then have to rerun the failed transactions.
+You likely want to rerun the program to resubmit any failed transactions. Solana transactions can fail for various reasons, many of which are transient failures and that are solved by simply retrying them. You can resubmit these transactions by copying `failed.csv` to `addresses.csv` and rerunning the program. Note that you may also wish to copy `success.csv` and `addresses.csv` to new files in order to keep a record of the successful transactions.
